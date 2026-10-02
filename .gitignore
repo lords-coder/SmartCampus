@@ -1,0 +1,24 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+.next/
+.turbo/
+coverage/
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local QA output (screenshots from scripts/probe-*.mjs)
+frontend/artifacts/
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db

@@ -1,0 +1,401 @@
+# SmartCampus AI Ã¢â‚¬â€ Architecture (Phase 4)
+
+## 1. High-level
+
+```
+Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â
+Ã¢â€â€š  frontend (Next.js)  Ã¢â€â€š  React UI Ã‚Â· JWT stored in localStorage Ã‚Â· single API client
+Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ
+           Ã¢â€â€š  HTTPS/JSON  Ã‚Â·  Authorization: Bearer <jwt>
+Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€“Â¼Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â
+Ã¢â€â€š  backend (Express)   Ã¢â€â€š  middleware Ã¢â€ â€™ controller Ã¢â€ â€™ service Ã¢â€ â€™ SQL
+Ã¢â€â€š  modular monolith    Ã¢â€â€š
+Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ
+           Ã¢â€â€š  parameterised SQL (pg pool)
+Ã¢â€Å’Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€“Â¼Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Â
+Ã¢â€â€š  PostgreSQL 16       Ã¢â€â€š  migrations in database/migrations/*.sql
+Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ
+```
+
+One frontend, one backend, one database. No microservices. Every feature is added as a
+**module** inside `backend/src/modules/`, keeping the door open for later phases without a
+rewrite.
+
+## 2. Backend request lifecycle
+
+```
+HTTP request
+  Ã¢â€ â€™ cors()                    allow-listed origins only (FRONTEND_URL)
+  Ã¢â€ â€™ express.json()            100kb body limit
+  Ã¢â€ â€™ request logger            method, path, status, duration (never logs bodies)
+  Ã¢â€ â€™ routes/index.ts           /api/health Ã‚Â· /api/auth Ã‚Â· /api/students Ã‚Â· /api/attendance Ã‚Â· /api/fees Ã‚Â· /api/timetable
+      Ã¢â€ â€™ middleware/validate   Zod schema Ã¢â€ â€™ 400 VALIDATION_ERROR
+      Ã¢â€ â€™ middleware/authenticate.requireAuth()
+            verifies JWT (HS256 + JWT_SECRET + issuer)
+            loads the user row from PostgreSQL  Ã¢â€ Â role changes take effect immediately
+      Ã¢â€ â€™ middleware/authenticate.requireRole("STUDENT")
+      Ã¢â€ â€™ controller            parses validated input, calls service, shapes response
+      Ã¢â€ â€™ service               owns ALL SQL and domain logic
+  Ã¢â€ â€™ middleware/errorHandler   ZodError/ApiError/PG error Ã¢â€ â€™ uniform envelope + status
+```
+
+Rules used everywhere:
+
+- Controllers stay thin Ã¢â‚¬â€ no SQL, no business rules in route handlers.
+- Services own queries (`students.service.ts`, `auth.service.ts`); SQL lives only there.
+- All responses go through `utils/response.ts` (`sendSuccess` / `sendError`).
+- All failures throw `ApiError` or are translated by the central error handler.
+
+### Adding a module
+
+```
+backend/src/modules/<name>/
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ <name>.routes.ts       router + validate() wiring
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ <name>.controller.ts   request/response only
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ <name>.service.ts      SQL + domain logic
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ <name>.schemas.ts      Zod schemas (optional)
+Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ <name>.types.ts        DTO shapes (optional)
+```
+
+Register it once in `src/routes/index.ts`:
+
+```ts
+router.use("/attendance", requireAuth, attendanceRoutes);
+```
+
+Then add migrations under `database/migrations/` (new numbered file) and, if the UI needs it,
+one typed interface in `frontend/src/lib/types.ts` plus a `useApi<T>()` call.
+
+## 3. Authentication
+
+1. `POST /api/auth/login` verifies with **bcrypt** (10 rounds by default).
+2. On success the server signs a JWT: `{ sub, role, email }`, `issuer: smartcampus-ai`,
+   expiry `JWT_EXPIRES_IN` (default 1 day), key `JWT_SECRET` (env only).
+3. The frontend stores the token in `localStorage` and attaches it via `Authorization`.
+4. `requireAuth` re-reads the user from the database on **every** request, so a deleted or
+   role-changed account is immediately reflected Ã¢â‚¬â€ the JWT is not treated as a source of truth.
+5. On any 401 the API client clears the token and emits `smartcampus:unauthorized`;
+   `AuthProvider` flips the app to signed-out and `AuthGuard` routes to `/login`
+   (the login form shows "your session expired").
+
+Known trade-off: `localStorage` is XSS-explainable. Moving to an httpOnly cookie is a
+a later hardening item (requires CORS credentials and same-site work).
+
+## 4. Authorization (RBAC)
+
+| Layer | Mechanism |
+| ----- | --------- |
+| Backend (authoritative) | `requireAuth` + `requireRole(...roles)` mounted per router; students' data is always scoped by `WHERE user_id = $1` |
+| Frontend (UX only) | `<AuthGuard>` in `app/(app)/layout.tsx` (session required), `<RoleGuard roles={[...]}>` per page (redirects to the role's home) |
+
+Roles are defined once in `backend/src/utils/roles.ts`:
+
+```ts
+ROLES        = STUDENT | FACULTY | ADMIN | PARENT | SUPER_ADMIN   // DB CHECK constraint matches
+ACTIVE_ROLES = STUDENT | FACULTY | ADMIN                          // operational in Phase 2
+```
+
+Adding `PARENT` later requires: no schema change (the CHECK already allows it), one entry in
+`ACTIVE_ROLES`, `requireRole("PARENT")` on the new router, a `RoleGuard` value and a
+`roleHome()` branch. **No authorization logic is duplicated** across modules.
+
+Public registration deliberately accepts only `STUDENT` and `FACULTY`; `ADMIN` accounts are
+created through seeding.
+
+### Permission matrix (Phase 4)
+
+| Action | Student | Faculty | Admin |
+| ------ | ------- | ------- | ----- |
+| View own attendance | Ã¢Å“â€¦ | Ã¢â‚¬â€ | Ã¢â‚¬â€ |
+| List/manage attendance classes | Ã¢ÂÅ’ 403 | Ã¢Å“â€¦ own timetable entries | Ã¢Å“â€¦ every entry |
+| Mark / edit attendance | Ã¢ÂÅ’ 403 | Ã¢Å“â€¦ assigned class only, server-verified | Ã¢Å“â€¦ any class |
+| View own fees | Ã¢Å“â€¦ | Ã¢ÂÅ’ 403 | Ã¢â‚¬â€ |
+| Read admin fee register (`GET /fees`) | Ã¢ÂÅ’ 403 | Ã¢ÂÅ’ 403 | Ã¢Å“â€¦ |
+| Record fee payment | Ã¢ÂÅ’ 403 | Ã¢ÂÅ’ 403 | Ã¢Å“â€¦ |
+| Read payment history | Ã¢Å“â€¦ own fee records only | Ã¢ÂÅ’ 403 | Ã¢Å“â€¦ any |
+| Modify fee amount / delete records | Ã¢ÂÅ’ | Ã¢ÂÅ’ | Ã¢ÂÅ’ not exposed |
+| Read timetable register | Ã¢ÂÅ’ 403 | Ã¢Å“â€¦ own classes only (filters forced to self) | Ã¢Å“â€¦ full register + filters |
+| Create / edit timetable entries | Ã¢ÂÅ’ 403 | Ã¢ÂÅ’ 403 | Ã¢Å“â€¦ (conflict-checked) |
+| Archive / delete timetable entries | Ã¢ÂÅ’ 403 | Ã¢ÂÅ’ 403 | Ã¢Å“â€¦ archive default, hard delete only without history |
+| Ask the AI assistant (`POST /ai/ask`) | Ã¢Å“â€¦ own attendance, fees, timetable | Ã¢Å“â€¦ own classes and attendance | Ã¢Å“â€¦ institute fee register and schedule |
+
+How the rules are enforced (never in the browser):
+
+- **Attendance** Ã¢â‚¬â€ `attendance.service.ts#loadEntryForUser` loads the timetable entry and, for
+  `FACULTY`, compares `timetable_entries.faculty_id` with the caller's `faculties.id`
+  (resolved from `users.id`). Every read and write path goes through it. The roster is always
+  recomputed from `enrollments` + section + semester, and each submitted `studentId` must be a
+  member of that roster, so a forged `studentId`, `courseId`, `facultyId` or `section` cannot
+  target another class.
+- **Fees** Ã¢â‚¬â€ routers declare `requireRole("ADMIN")` for register/payment writes and
+  `requireRole("ADMIN", "STUDENT")` for history; the service then checks
+  `fees.student_id Ã¢â€ â€™ students.user_id` for the student path and returns `404` (not 403) when a
+  student requests someone else's fee id so the record's existence is not leaked.
+- **Timetable** Ã¢â‚¬â€ the router mounts `requireRole("FACULTY", "ADMIN")` for reads and
+  `requireRole("ADMIN")` for every write, so students can never reach the register at all. For
+  `FACULTY` the service overwrites the requested `facultyId` filter with the caller's own
+  `faculties.id` and `getEntry` compares ownership before returning, so a crafted filter or entry
+  id cannot expose another teacher's week.
+- **AI assistant** Ã¢â‚¬â€ the router mounts `requireAuth Ã¢â€ â€™ requireRole("STUDENT","FACULTY","ADMIN") Ã¢â€ â€™
+  validate Ã¢â€ â€™ rate limit`, and `ai.tools.ts#retrieve` dispatches to a different tool set per role.
+  Every tool calls an existing service (which re-applies IDOR scoping), and only a minimized,
+  user-scoped context reaches the model Ã¢â‚¬â€ see section 12.
+
+## 5. Attendance workflow (Phase 2)
+
+```
+faculty selects class (GET /attendance/classes)
+        Ã¢â€ â€œ
+choose date Ã¢â€ â€™ GET /attendance/classes/:id?date=   Ã¢â€ Â roster + saved statuses
+        Ã¢â€ â€œ
+mark Present/Absent locally (draft state, not persisted)
+        Ã¢â€ â€œ
+POST /attendance { timetableEntryId, date, attendance[] }
+        Ã¢â€ â€œ
+  validate (zod) Ã¢â€ â€™ loadEntryForUser (ownership) Ã¢â€ â€™ date rules
+  Ã¢â€ â€™ recompute roster Ã¢â€ â€™ reject unknown/duplicate students
+        Ã¢â€ â€œ
+  BEGIN  Ã‚Â· INSERT Ã¢â‚¬Â¦ ON CONFLICT (student, course, date) DO UPDATE  Ã‚Â· COMMIT
+        Ã¢â€ â€œ
+students' /attendance-summary and /attendance change immediately
+```
+
+- Atomic: one transaction per class submission Ã¢â‚¬â€ all rows or none.
+- Idempotent: the existing `UNIQUE (student_id, course_id, date)` constraint turns a repeat
+  submission into an UPDATE (`isUpdate: true` in the response).
+- `recorded_by` keeps the original faculty member when an admin edits (`COALESCE`).
+- Read model for students is a simple aggregate over `attendance` Ã¢â‚¬â€ no cached percentages, so
+  a faculty submission is visible on the student dashboard and attendance page on next fetch.
+
+## 6. Fee payment workflow (Phase 2)
+
+```
+admin opens a fee (GET /fees?q=&status=)
+        Ã¢â€ â€œ
+dialog loads history (GET /fees/:id/payments)
+        Ã¢â€ â€œ
+POST /fees/:id/payments { amount, paymentMethod, reference? }
+        Ã¢â€ â€œ
+BEGIN
+  SELECT Ã¢â‚¬Â¦ FROM fees WHERE id = $1 FOR UPDATE     Ã¢â€ Â row lock
+  balance = amount - amount_paid
+  amount > balance Ã¢â€ â€™ 400 OVERPAYMENT  Ã¢â€ â€™ ROLLBACK
+  INSERT INTO fee_payments (fee_id, amount, payment_method, reference, recorded_by)
+  UPDATE fees SET amount_paid, status = PENDING|PARTIAL|PAID
+COMMIT
+```
+
+Payment rows are immutable history; the `fees` row is only ever updated, never deleted.
+`fee_payments.recorded_by` records which admin entered it (audit trail), and
+`ON DELETE SET NULL` keeps history if an account is removed.
+
+## 7. Timetable management workflow (Phase 3)
+
+```
+admin opens the register (GET /timetable?day=&section=&facultyId=&room=&status=)
+        Ã¢â€ â€œ
+form options (GET /timetable/options)  Ã¢â€ â€™ courses, faculty, sections with student counts
+        Ã¢â€ â€œ
+POST /timetable  or  PATCH /timetable/:id
+        Ã¢â€ â€œ
+BEGIN
+  pg_advisory_xact_lock(TIMETABLE_WRITE_LOCK)   Ã¢â€ Â one writer at a time
+  load course (404) Ã‚Â· load faculty (404) Ã‚Â· assert section has students (400)
+  derive semester + department from the course (never from the client)
+  findConflicts(): FACULTY / ROOM / SECTION overlaps vs active entries
+    edit path excludes the row itself Ã¢â€ â€™ no false self-conflict
+    409 TIMETABLE_CONFLICT { conflictTypes, conflicts }  Ã¢â€ â€™ ROLLBACK
+  INSERT Ã¢â‚¬Â¦ or UPDATE Ã¢â‚¬Â¦                              (reload the row for the response)
+COMMIT
+        Ã¢â€ â€œ
+DELETE /timetable/:id                 Ã¢â€ Â archive: is_active=false, archived_at=now()
+DELETE /timetable/:id?permanent=true  Ã¢â€ Â only when related attendance count = 0
+```
+
+- **One timetable system.** Attendance, the faculty week view and the student schedule all read the
+  same `timetable_entries` rows; there is no second copy to keep in sync.
+- **Archive is the default delete.** `attendance` has no FK to `timetable_entries`, so history never
+  breaks Ã¢â‚¬â€ archiving also hides the slot from students, faculty class lists and attendance rosters,
+  and `PATCH { isActive: true }` restores it. A hard delete needs `?permanent=true` and is refused
+  with `409 DEPENDENCY_CONFLICT` (`details.remediation: "ARCHIVE"`) while attendance rows relate to
+  that class, so an admin can never silently orphan history.
+- **Serialised writes.** Conflict checks and the write happen in one transaction behind a session
+  advisory lock, so two simultaneous "create" requests cannot both pass the check and then both
+  insert.
+- **Revive instead of a constraint error.** Creating a slot identical to an archived one (same
+  course, day, start time, section) reactivates that row rather than tripping
+  `UNIQUE (course_id, day_of_week, start_time, section)`.
+- **Derived, not declared.** `semester` and `department` are copied from the course on every write,
+  so a client cannot place a class into a semester the course does not run in.
+
+## 8. Frontend architecture
+
+```
+app/
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ layout.tsx            AuthProvider + Toaster + font/theme wiring
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ page.tsx              entry: redirects by session/role
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ login/page.tsx        public
+Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ (app)/                protected shell (AuthGuard + AppShell: sidebar, header, profile menu)
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ layout.tsx
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ dashboard/        STUDENT
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ attendance/       STUDENT
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ fees/             STUDENT
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ timetable/        STUDENT
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ ai/               STUDENT | FACULTY | ADMIN  (grounded AI chat)
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ profile/          STUDENT | FACULTY | ADMIN
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ faculty/          FACULTY   Ã¢â€ â€™ attendance management (AttendanceManager)
+    Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ timetable/    FACULTY   Ã¢â€ â€™ read-only week view (FacultyTimetable)
+    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ admin/            ADMIN     Ã¢â€ â€™ fee management (FeeManagement + RecordPaymentDialog)
+    Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ timetable/    ADMIN     Ã¢â€ â€™ timetable register (TimetableManager)
+```
+
+New in Phase 2 (reused components everywhere else):
+
+- `components/attendance/attendance-manager.tsx` Ã¢â‚¬â€ class picker, date picker, roster table,
+  present/absent controls, all-present / all-absent / reset, submit + retry, saved-state badges.
+- `components/admin/fee-management.tsx` Ã¢â‚¬â€ search + status filter, institute totals, fee table.
+- `components/fees/record-payment-dialog.tsx` Ã¢â‚¬â€ amount/method/reference form with client-side
+  validation, live balance, payment history.
+- `components/fees/payment-history.tsx` Ã¢â‚¬â€ shared payment list (admin dialog and student fees page).
+
+New in Phase 3:
+
+- `components/admin/timetable-manager.tsx` Ã¢â‚¬â€ room/day/section/faculty/status filters, register
+  table, per-row edit / archive / restore / delete, and the create dialog wiring.
+- `components/admin/timetable-entry-dialog.tsx` Ã¢â‚¬â€ create & edit form (course, faculty, section,
+  room, day, times, status); renders the server's `TIMETABLE_CONFLICT` payload as an inline list of
+  clashing classes instead of a generic error.
+- `components/admin/timetable-delete-dialog.tsx` Ã¢â‚¬â€ archive-first confirmation that explains the
+  attendance dependency and disables "Delete permanently" while history exists.
+- `components/faculty/timetable-view.tsx` Ã¢â‚¬â€ read-only week view with day tabs and week stats.
+
+- **API client**: `lib/api.ts` is the only place that calls `fetch`. It unwraps the envelope,
+  throws typed `ApiError`s, handles network failures and broadcasts the 401 event.
+- **Data fetching**: `hooks/use-api.ts` gives every page `data / loading / error / reload`
+  so loading, error and empty states are consistent and not duplicated per page.
+- **Business logic** stays out of components (format helpers live in `lib/format.ts`,
+  types in `lib/types.ts`).
+- Server components are used only for static shells; all data screens are client components
+  because the API is called with the bearer token from the browser.
+
+## 9. Database
+
+```
+users 1 Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ 1 students Ã¢â€â‚¬Ã¢â€â‚¬< enrollments >Ã¢â€â‚¬Ã¢â€â‚¬ courses >Ã¢â€â‚¬Ã¢â€â‚¬ faculties 1Ã¢â€â‚¬Ã¢â€â‚¬1 users
+                    Ã¢â€â€š                           Ã¢â€â€š
+                    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬< attendance >Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€Ëœ
+                    Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬< fees >Ã¢â€â‚¬Ã¢â€â‚¬< fee_payments
+                    Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ (timetable_entries matches students by section + semester)
+```
+
+| Table | Purpose |
+| ----- | ------- |
+| `users` | identity: name, unique email, bcrypt hash, role (CHECK for 5 roles) |
+| `students` | student number, department, semester, section, batch year (FK Ã¢â€ â€™ users) |
+| `faculties` | employee number, department, designation (FK Ã¢â€ â€™ users) |
+| `courses` | code, name, credits, department, semester, assigned faculty |
+| `enrollments` | student Ã¢â€ â€ course, status ACTIVE/DROPPED/COMPLETED |
+| `attendance` | student, course, date, status, recorded_by; unique (student, course, date) |
+| `fees` | fee head, amount, amount paid, due date, status; CHECK amount_paid Ã¢â€°Â¤ amount |
+| `fee_payments` | immutable payment history: amount, method, reference, recorded_by (FK Ã¢â€ â€™ users) |
+| `timetable_entries` | course, faculty (nullable, `ON DELETE SET NULL`), room, day, start/end (CHECK end > start), section, semester, `is_active` + `archived_at` (Phase 3), `UNIQUE (course, day, start, section)` |
+| `schema_migrations` | applied migration files (created by the runner) |
+
+Migrations are plain SQL files applied in filename order inside a transaction and recorded in
+`schema_migrations`. `npm run seed` truncates, re-inserts realistic data (12 users, 6 courses,
+30 timetable slots, 540 attendance rows, 18 fee records, 12 payment rows) and re-sequences
+generated IDs. Phase 2 added `004_phase2_operations.sql`, Phase 3 added
+`005_phase3_timetable.sql` (`is_active`, `archived_at` and the register indexes); earlier
+migrations are never edited.
+
+`attendance` deliberately carries **no** foreign key to `timetable_entries` Ã¢â‚¬â€ it references
+`students` + `courses`, so archiving or (when allowed) deleting a slot can never orphan or cascade
+away history.
+
+**DATE columns** are parsed by node-pg as *local* midnight, so every date leaving the API goes
+through `utils/date.ts#toLocalDateString` Ã¢â‚¬â€ using `toISOString()` there would shift the value
+back one day in time zones east of Greenwich.
+
+## 10. Security baseline
+
+Implemented: bcrypt hashing, JWT expiry + issuer claim, secrets only in `.env` (git-ignored),
+backend RBAC on every route, ownership checks for attendance and payments (IDOR-safe), Zod input
+validation, parameterised SQL everywhere, `SELECT … FOR UPDATE` on fee updates, transactional
+writes for attendance, payments and timetable entries (advisory lock serialises timetable
+conflict checks), CORS allow-list, `x-powered-by` disabled, 100kb body limit,
+no password/hash fields in any response, generic 500 message in production.
+
+AI-specific (Phase 4): per-user rate limiting on `POST /ai/ask` (30/min → 429 `RATE_LIMITED`),
+deterministic server-side intent routing (the model cannot choose tools), allowlisted read-only
+tools that reuse IDOR-safe services, minimized context (no ids, hashes, tokens or credentials ever
+reach the prompt), fixed refusals for prompt-injection / secret / out-of-scope requests, cross-user
+phrasing answered with a scope note and the caller's own data only, malformed JSON rejected as
+400 `INVALID_JSON`, and provider failures surfaced as 503/504 with the raw provider error logged
+(server-side) but never returned to the client.
+
+Deferred (later phases): httpOnly cookie sessions, global rate limiting (the AI endpoint is the
+only throttled route today), refresh tokens, audit log, helmet security headers, payment gateway
+integration.
+
+## 11. Environment & ports
+
+| Component | Port | Start |
+| --------- | ---- | ----- |
+| PostgreSQL | 5432 | `docker compose up -d` |
+| Backend API | 4000 | `cd backend && npm run dev` |
+| Frontend | 3000 | `cd frontend && npm run dev` |
+
+Configuration lives in `backend/.env` and `frontend/.env.local`; templates are
+`backend/.env.example` and `frontend/.env.example`.
+
+## 12. AI assistant workflow (Phase 4)
+
+**Request flow:**
+
+```
+POST /api/ai/ask
+  -> authenticate (JWT)
+  -> requireRole(STUDENT | FACULTY | ADMIN)
+  -> validate(askSchema)               Zod: 1-1000 chars, unknown keys stripped
+  -> askLimiter                        30/min per user id -> 429 RATE_LIMITED
+  -> ai.service.ask
+       1. routeMessage                 deterministic intent routing (regex), no model involvement
+       2. retrieve(actor, route)       allowlisted read-only tools -> existing services only
+                                       (students / fees / attendance / timetable); SQL stays here
+       3. buildSystemPrompt            grounding rules + scope note + minimized context
+                                       (no ids, no credentials)
+       4. provider.complete            OpenAI gpt-4o-mini  |  deterministic mock (AI_PROVIDER=auto)
+       5. map to response              { answer, intent, sources, context, provider }
+```
+
+**Provider abstraction** (`ai.provider.ts`):
+- `AiProvider` interface with `complete(request)` returning `{text}`.
+- `OpenAiProvider` -> `https://api.openai.com/v1/chat/completions` with 12s timeout, AbortController.
+- `MockProvider` -> `renderMockAnswer()` — deterministic, covers all intents, same shape as OpenAI.
+- `createProvider()` -> `auto` = OpenAI when `OPENAI_API_KEY` set, else mock (default in CI/tests).
+
+**Tool matrix (intent -> services, role scoping):**
+
+| Intent | Student tool | Faculty tool | Admin tool |
+|--------|--------------|--------------|------------|
+| ATTENDANCE | `studentsService.getAttendanceSummary` | `facultyAttendanceSummary` (assigned classes) | N/A (refused) |
+| COURSE_ATTENDANCE | `studentsService.getAttendanceSummary` with course filter | same as student | N/A |
+| FEES | `studentsService.getFeesSummary` | N/A (refused) | `adminFeeRegister` (institute totals) |
+| FEE_HISTORY | `feesService.getPayments` per fee (IDOR-safe) | N/A | `adminFeeRegister(includeHistory=true)` |
+| TIMETABLE | `studentsService.getTimetable(today)` | `facultyTimetable(today)` | `adminSchedule(today)` |
+| NEXT_CLASS | `studentsService.pickNextClass` | `facultyPickNextClass` | N/A (refused) |
+| GENERAL | refusal / scope note | refusal / scope note | refusal / scope note |
+
+**Security properties:**
+- The model never receives SQL, tokens, hashes, internal IDs, or another user's data.
+- Intent is chosen by server-side regex, not the model — the model only phrases the answer.
+- Cross-user phrasing ("his attendance", "all students") -> `context.scopeNote` + caller's data only.
+- Injection / secret / out-of-scope -> fixed refusal (`GENERAL` intent, empty `sources`).
+- Rate limit keyed by authenticated `user.id` (validated body doesn't consume quota).
+- Provider failures logged server-side; client receives 503/504 only.
+
+**Frontend `/ai` page:**
+- `ChatAssistant` component: messages array, starter chips (role-aware), send + loading + retry + clear.
+- Source badges: "Attendance data", "Fee data", "Timetable data".
+- Client-side 30s timeout via `api.ts#timeoutMs`.
+
