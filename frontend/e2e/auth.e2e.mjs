@@ -40,7 +40,27 @@ async function main() {
   page.setDefaultTimeout(20000);
 
   const token = () => page.evaluate(() => window.localStorage.getItem("smartcampus_token"));
-  const bodyText = () => page.evaluate(() => document.body.innerText);
+  /**
+   * Read the visible page text. Sign-out performs a hard document navigation
+   * (window.location.replace), so during the swap the execution context can be
+   * destroyed or the next document's <body> not yet parsed. Retry across that
+   * window instead of throwing; we only ever return real text, never "".
+   */
+  const bodyText = async () => {
+    const deadline = Date.now() + 20000;
+    let lastError;
+    while (Date.now() < deadline) {
+      try {
+        const text = await page.evaluate(() => (document.body ? document.body.innerText : null));
+        if (text !== null) return text;
+        lastError = new Error("document.body was null");
+      } catch (error) {
+        lastError = error; // navigation in flight, retry
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    throw lastError ?? new Error("timed out waiting for a readable document.body");
+  };
   const clearSession = async () => {
     // Navigate onto the app origin first: localStorage is inaccessible on the
     // initial about:blank document.
